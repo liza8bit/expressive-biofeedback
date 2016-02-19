@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Expressive Biofeedback</title>
+<!--styles-->
+<link rel="stylesheet" href="css/style.css" type="text/css">
+<!--fonts-->
+<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+<!--scripts-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="scripts/smoothie/smoothie.js"></script>
+<script src="js/eeg.js"></script>
+</head>
+<body>
+    <div id="container">
+        <div id="button">
+            <button onclick="connectToMuse()">Connect to Muse</button>
+            <button onclick="disconnectFromMuse()">Disconnect from Muse</button>
+            <span id="musestatus"></span>
+        </div>
+        <div id="graphdiv">
+            <canvas id="graph" width="900" height="480"></canvas>
+            <ul id="graphlabels">
+                <li id="delta" style="color: rgba(15,198,0,1);">Delta</li>
+                <li id="theta" style="color: rgba(218,198,0,1);">Theta</li>
+                <li id="alpha" style="color: rgba(246,130,0,1);">Alpha</li>
+                <li id="beta" style="color: rgba(247,43,0,1);">Beta</li>
+                <li id="gamma" style="color: rgba(3,55,244,1);">Gamma</li>
+            </ul>
+            <!-- No descriptions to start with
+            <div id="loggraphdescription">
+            </div>
+            -->
+        </div>
+
+        <script src="js/graph.js"></script>
+    </div>
+</body>
+</html>
