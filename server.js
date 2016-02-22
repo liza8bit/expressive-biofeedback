@@ -15,16 +15,16 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-var deltaarr = []
-var deltaarr_sec = []
-var thetaarr = []
-var thetaarr_sec = []
-var alphaarr = []
-var alphaarr_sec = []
-var betaarr = []
-var betaarr_sec = []
-var gammaarr = []
-var gammaarr_sec = []
+var deltaarr = [];
+var deltaarr_sec = [];
+var thetaarr = [];
+var thetaarr_sec = [];
+var alphaarr = [];
+var alphaarr_sec = [];
+var betaarr = [];
+var betaarr_sec = [];
+var gammaarr = [];
+var gammaarr_sec = [];
 
 io.on('connection', function(socket) {
     console.log('connected');
@@ -181,7 +181,7 @@ function averageChannelData(data) {
         numValidChannels++;
     }
     var average = sum / numValidChannels;
-    return 0;
+    return average;
 }
 
 function checkTime(currentTime, lastTime) {
