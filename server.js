@@ -3,6 +3,7 @@ var nodeMuse = require("node-muse");
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var csv = require('fast-csv');
 
 app.use('/scripts', express.static(__dirname + '/node_modules/'));
 
@@ -14,11 +15,45 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
+var deltaarr = []
+var deltaarr_sec = []
+var thetaarr = []
+var thetaarr_sec = []
+var alphaarr = []
+var alphaarr_sec = []
+var betaarr = []
+var betaarr_sec = []
+var gammaarr = []
+var gammaarr_sec = []
 
 io.on('connection', function(socket) {
     console.log('connected');
 
     socket.on('connectmuse', function() {
+        // send fake data
+        /*socket.emit('muse_connected');
+        setInterval(function(){
+            var fakedelta = getRandom(0, 1);
+            var faketheta = getRandom(0, 1);
+            var fakealpha = getRandom(0, 1);
+            var fakebeta = getRandom(0, 1);
+            var fakegamma = getRandom(0, 1);
+            socket.emit('delta_relative', fakedelta);
+            socket.emit('theta_relative', faketheta);
+            socket.emit('alpha_relative', fakealpha);
+            socket.emit('beta_relative', fakebeta);
+            socket.emit('gamma_relative', fakegamma);
+            deltaarr.push([fakedelta]);
+            thetaarr.push([faketheta]);
+            alphaarr.push([fakealpha]);
+            betaarr.push([fakebeta]);
+            gammaarr.push([fakegamma]);
+
+        }, 1000);*/
+
+        // send muse data
+        // TODO: note any channels that aren't sending data...
+
         var muse = nodeMuse.connect().Muse;
 
         muse.on('connected', function() {
@@ -34,9 +69,6 @@ io.on('connection', function(socket) {
         muse.on('disconnected', function() {
             socket.emit('muse_unintended_disconnect');
         });
-
-        // send muse data
-        // TODO: note any channels that aren't sending data...
 
         // only send once every second
         var deltanow = Date.now();
@@ -54,40 +86,55 @@ io.on('connection', function(socket) {
         // see: http://developer.choosemuse.com/research-tools/available-data#Relative_Band_Powers
         muse.on('/muse/elements/delta_relative', function(data){
             deltanow = Date.now();
+            var deltadata = averageChannelData(data);
+            deltaarr.push([deltadata]);
             if (checkTime(deltanow, deltalast)) {
                 deltalast = deltanow;
-                socket.emit('delta_relative', averageChannelData(data));
+                deltaarr_sec.push([deltadata])
+                socket.emit('delta_relative', deltadata);
             }
         });
 
         muse.on('/muse/elements/theta_relative', function(data){
             thetanow = Date.now();
+            var thetadata = averageChannelData(data);
+            thetaarr.push([thetadata]);
             if (checkTime(thetanow, thetalast)) {
                 thetalast = thetanow;
+                thetaarr_sec.push([thetadata]);
                 socket.emit('theta_relative', averageChannelData(data));
             }
         });
 
         muse.on('/muse/elements/alpha_relative', function(data){
             alphanow = Date.now();
+            var alphadata = averageChannelData(data);
+            alphaarr.push([alphadata]);
             if (checkTime(alphanow, alphalast)) {
                 alphalast = alphanow;
+                alphaarr_sec.push([alphadata]);
                 socket.emit('alpha_relative', averageChannelData(data));
             }
         });
 
         muse.on('/muse/elements/beta_relative', function(data){
             betanow = Date.now();
+            var betadata = averageChannelData(data);
+            betaarr.push([betadata]);
             if (checkTime(betanow, betalast)) {
                 betalast = betanow;
+                betaarr_sec.push([betadata]);
                 socket.emit('beta_relative', averageChannelData(data));
             }
         });
 
         muse.on('/muse/elements/gamma_relative', function(data){
             gammanow = Date.now();
+            var gammadata = averageChannelData(data);
+            gammaarr.push([gammadata]);
             if (checkTime(gammanow, gammalast)) {
                 gammalast = gammanow;
+                gammaarr_sec.push([gammadata]);
                 socket.emit('gamma_relative', averageChannelData(data));
             }
         });
@@ -96,6 +143,18 @@ io.on('connection', function(socket) {
     socket.on('disconnectmuse', function() {
         nodeMuse.disconnect();
         socket.emit('muse_disconnect');
+
+        // save all data to csv file
+        downloadData(deltaarr, 'delta');
+        downloadData(thetaarr, 'theta');
+        downloadData(alphaarr, 'alpha');
+        downloadData(betaarr, 'beta');
+        downloadData(gammaarr, 'gamma');
+        downloadData(deltaarr_sec, 'delta_sec');
+        downloadData(thetaarr_sec, 'theta_sec');
+        downloadData(alphaarr_sec, 'alpha_sec');
+        downloadData(betaarr_sec, 'beta_sec');
+        downloadData(gammaarr_sec, 'gamma_sec');
     });
 });
 
@@ -122,7 +181,7 @@ function averageChannelData(data) {
         numValidChannels++;
     }
     var average = sum / numValidChannels;
-    return average;
+    return 0;
 }
 
 function checkTime(currentTime, lastTime) {
@@ -130,6 +189,18 @@ function checkTime(currentTime, lastTime) {
         return true;
     }
     return false;
+}
+
+function getRandom(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function downloadData(data, filename) {
+    csv
+       .writeToPath(filename + ".csv", data, {headers: true})
+       .on("finish", function(){
+           console.log("done!");
+       });
 }
 
 http.listen(process.env.PORT || 3000, function(){

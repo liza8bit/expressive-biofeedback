@@ -1,6 +1,7 @@
 // functions for creating line graph for eeg data
 
 var deltaline, thetaline, alphaline, betaline, gammaline;
+var deltaarr, thetaarr, alphaarr, betaarr, gammaarr;
 var linegraph, socket;
 
 function connectToMuse() {
@@ -25,7 +26,7 @@ function disconnectFromMuse() {
     socket.emit('disconnectmuse');
 
     socket.on('muse_disconnect', function() {
-        $('#musestatus').text('Muse has been disconnected.');
+        $('#musestatus').text('Muse has been disconnected. Outputting csv files.');
     });
 }
 
@@ -33,19 +34,19 @@ function startGraphing() {
     linegraph = createGraph();
 
     socket.on('delta_relative', function(data) {
-        addData(data, deltaline);
+        addData(data, deltaline, deltaarr);
     });
     socket.on('theta_relative', function(data) {
-        addData(data, thetaline);
+        addData(data, thetaline, thetaarr);
     });
     socket.on('alpha_relative', function(data) {
-        addData(data, alphaline);
+        addData(data, alphaline, alphaarr);
     });
     socket.on('beta_relative', function(data) {
-        addData(data, betaline);
+        addData(data, betaline, betaarr);
     });
     socket.on('gamma_relative', function(data) {
-        addData(data, gammaline);
+        addData(data, gammaline, gammaarr);
     });
 }
 
@@ -157,9 +158,16 @@ function createGraph() {
     gammaline = new TimeSeries();
     addLine(smoothie, gammaline, 'gamma');
 
+    deltaarr = [];
+    thetaarr = [];
+    alphaarr = [];
+    betaarr = [];
+    gammaarr = [];
+
     return smoothie;
 }
 
-function addData(data, line) {
+function addData(data, line, dataarr) {
     line.append(new Date().getTime(), data);
+    dataarr.push(data);
 }
