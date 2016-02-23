@@ -87,9 +87,11 @@ io.on('connection', function(socket) {
         muse.on('/muse/elements/delta_relative', function(data){
             deltanow = Date.now();
             var deltadata = averageChannelData(data);
-            deltaarr.push([deltadata]);
+            // save raw data from all 4 channels for later analysis
+            deltaarr.push(data.values);
             if (checkTime(deltanow, deltalast)) {
                 deltalast = deltanow;
+                // save data that's visualized
                 deltaarr_sec.push([deltadata])
                 socket.emit('delta_relative', deltadata);
             }
@@ -98,7 +100,7 @@ io.on('connection', function(socket) {
         muse.on('/muse/elements/theta_relative', function(data){
             thetanow = Date.now();
             var thetadata = averageChannelData(data);
-            thetaarr.push([thetadata]);
+            thetaarr.push(data.values);
             if (checkTime(thetanow, thetalast)) {
                 thetalast = thetanow;
                 thetaarr_sec.push([thetadata]);
@@ -109,7 +111,7 @@ io.on('connection', function(socket) {
         muse.on('/muse/elements/alpha_relative', function(data){
             alphanow = Date.now();
             var alphadata = averageChannelData(data);
-            alphaarr.push([alphadata]);
+            alphaarr.push(data.values);
             if (checkTime(alphanow, alphalast)) {
                 alphalast = alphanow;
                 alphaarr_sec.push([alphadata]);
@@ -120,7 +122,7 @@ io.on('connection', function(socket) {
         muse.on('/muse/elements/beta_relative', function(data){
             betanow = Date.now();
             var betadata = averageChannelData(data);
-            betaarr.push([betadata]);
+            betaarr.push(data.values);
             if (checkTime(betanow, betalast)) {
                 betalast = betanow;
                 betaarr_sec.push([betadata]);
@@ -131,7 +133,7 @@ io.on('connection', function(socket) {
         muse.on('/muse/elements/gamma_relative', function(data){
             gammanow = Date.now();
             var gammadata = averageChannelData(data);
-            gammaarr.push([gammadata]);
+            gammaarr.push(data.values);
             if (checkTime(gammanow, gammalast)) {
                 gammalast = gammanow;
                 gammaarr_sec.push([gammadata]);
