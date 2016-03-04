@@ -10,3 +10,7 @@
 5. Press the 'Connect to Muse' button to connect to Muse and start streaming data. Note that Muse may take a second before it starts streaming proper data, so just wait if you first see a flat line.
 
 6. If you find that Muse keeps disconnecting, check to make sure there aren't any additional Muse processes that may not have stopped properly from previous runs, i.e. ```ps aux | grep 'muse-io'```
+
+
+Sample output:
+[Click Me](http://i.imgur.com/dL0BBnK.gifv)
