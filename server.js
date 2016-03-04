@@ -31,7 +31,7 @@ io.on('connection', function(socket) {
 
     socket.on('connectmuse', function() {
         // send fake data
-        /*socket.emit('muse_connected');
+        socket.emit('muse_connected');
         setInterval(function(){
             var fakedelta = getRandom(0, 1);
             var faketheta = getRandom(0, 1);
@@ -49,11 +49,11 @@ io.on('connection', function(socket) {
             betaarr.push([fakebeta]);
             gammaarr.push([fakegamma]);
 
-        }, 1000);*/
+        }, 1000);
 
         // send muse data
         // TODO: note any channels that aren't sending data...
-
+        /*
         var muse = nodeMuse.connect().Muse;
 
         muse.on('connected', function() {
@@ -139,7 +139,7 @@ io.on('connection', function(socket) {
                 gammaarr_sec.push([gammadata]);
                 socket.emit('gamma_relative', averageChannelData(data));
             }
-        });
+        });*/
     });
 
     socket.on('disconnectmuse', function() {
